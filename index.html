@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Jaisinghpur Food App</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body{font-family:Arial;margin:0;background:#f5f5f5}
+header{background:#ff5722;color:white;padding:15px;text-align:center}
+.container{padding:15px}
+.card{background:white;padding:10px;margin:10px 0;border-radius:10px}
+button{padding:10px;margin:5px;border:none;border-radius:8px}
+.buy{background:#2196f3;color:white}
+.hidden{display:none}
+.menu-item{cursor:pointer}
+</style>
+</head>
+
+<body>
+
+<header>
+<h2>🍔 Jaisinghpur Food App</h2>
+</header>
+
+<!-- SIGNUP -->
+<div id="signup" class="container">
+<h3>New User Signup</h3>
+<input id="name" placeholder="Name"><br><br>
+<input id="phone" placeholder="Phone"><br><br>
+<input id="email" placeholder="Email"><br><br>
+<button onclick="next1()">Next</button>
+</div>
+
+<!-- LOCATION -->
+<div id="location" class="container hidden">
+<h3>Select Location</h3>
+<select id="loc">
+<option>Jaisinghpur</option>
+<option>Makkad</option>
+<option>Kuttan</option>
+<option>Tikkri</option>
+</select><br><br>
+<button onclick="next2()">Next</button>
+</div>
+
+<!-- MENU -->
+<div id="menu" class="container hidden">
+<h3>Menu (Max 7 Items)</h3>
+<div id="items"></div>
+<button class="buy" onclick="goCart()">Buy</button>
+</div>
+
+<!-- CART -->
+<div id="cart" class="container hidden">
+<h3>Your Order</h3>
+<div id="bill"></div>
+<button class="buy" onclick="confirmOrder()">Confirm Order</button>
+</div>
+
+<!-- THANK YOU -->
+<div id="thanks" class="container hidden">
+<h2>🙏 Thank You</h2>
+</div>
+
+<!-- SETTINGS -->
+<div id="settings" class="container hidden">
+<h3>Helpline & Terms</h3>
+<p>📞 9015183854</p>
+<p>Order cancel within 2 minutes by call only. After confirm 50% charge applicable.</p>
+<button onclick="closeSet()">Close</button>
+</div>
+
+<button onclick="document.getElementById('settings').classList.toggle('hidden')"
+style="position:fixed;top:10px;right:10px">⋮</button>
+
+<script>
+
+let user={}
+let selected=[]
+
+const food=[
+["Aloo Tikki Burger",60],
+["Veg Burger",90],
+["Cheese Burger",120],
+["Paneer Burger",140],
+["Chicken Burger",150],
+["Veg Pizza",180],
+["Margherita Pizza",200],
+["Paneer Pizza",250],
+["Chicken Pizza",300],
+["Veg Chowmein",100],
+["Chicken Chowmein",140],
+["Veg Momos",80],
+["Fried Momos",120],
+["French Fries",90],
+["Pav Bhaji",120],
+["Samosa",20],
+["Cold Coffee",120]
+]
+
+function next1(){
+user.name=name.value
+user.phone=phone.value
+user.email=email.value
+
+signup.classList.add("hidden")
+location.classList.remove("hidden")
+}
+
+function next2(){
+user.location=loc.value
+
+location.classList.add("hidden")
+menu.classList.remove("hidden")
+
+let html=""
+food.forEach((f,i)=>{
+html+=`<div class="card menu-item" onclick="toggle(${i})">
+${f[0]} - ₹${f[1]}
+</div>`
+})
+
+items.innerHTML=html
+}
+
+function toggle(i){
+if(selected.includes(i)){
+selected=selected.filter(x=>x!=i)
+}else{
+if(selected.length>=7){alert("Max 7 items");return}
+selected.push(i)
+}
+}
+
+function goCart(){
+if(selected.length==0){alert("Select items");return}
+
+let total=0
+let html=""
+
+selected.forEach(i=>{
+html+=food[i][0]+" - ₹"+food[i][1]+"<br>"
+total+=food[i][1]
+})
+
+total+=15
+user.total=total
+
+menu.classList.add("hidden")
+cart.classList.remove("hidden")
+
+bill.innerHTML=html+"<br>Delivery ₹15<br><h3>Total ₹"+total+"</h3>"
+}
+
+function confirmOrder(){
+localStorage.setItem("order",JSON.stringify({user,selected}))
+
+cart.classList.add("hidden")
+thanks.classList.remove("hidden")
+
+setTimeout(()=>location.reload(),4000)
+}
+
+</script>
+
+</body>
+</html>
